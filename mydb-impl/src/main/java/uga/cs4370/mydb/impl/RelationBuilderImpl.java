@@ -1,8 +1,6 @@
 package uga.cs4370.mydb.impl;
 
-import uga.cs4370.mydb.RelationBuilder;
-import uga.cs4370.mydb.Type;
-import uga.cs4370.mydb.Relation;
+import uga.cs4370.mydb.*;
 import java.util.List;
 
 public class RelationBuilderImpl implements RelationBuilder {
@@ -18,7 +16,7 @@ public class RelationBuilderImpl implements RelationBuilder {
       if (attrs.getClass().equals(String.class)) {
         throw new IllegalArgumentException("Attributes must be strings.");
       }
-      RelationImpl relation = new RelationImpl(name, attrs, types);
+      Relation relation = new RelationImpl(name, attrs, types);
       return relation;
     }
 }

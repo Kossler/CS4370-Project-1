@@ -9,7 +9,7 @@ import java.util.List;
 
 public class RelationImpl implements Relation {
 
-  private String name;
+    private String name;
     private List<String> attrs;
     private List<Type> types;
     private List<List<Cell>> rows;
