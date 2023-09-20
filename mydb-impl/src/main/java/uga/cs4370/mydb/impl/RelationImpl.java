@@ -90,7 +90,6 @@ public class RelationImpl implements Relation {
 
     @Override
     public void print() {
-        
         System.out.println(name);
         System.out.println(attrs);
         for (List<Cell> row : rows) {
