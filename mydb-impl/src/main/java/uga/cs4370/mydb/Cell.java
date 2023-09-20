@@ -62,6 +62,13 @@ public class Cell {
         return (String) data;
     }
 
+    /**
+     * Return the cell's type.
+     */
+    public Type getType() {
+        return type;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -83,5 +90,7 @@ public class Cell {
     public String toString() {
         return data.toString();
     }
+
+
 
 }
