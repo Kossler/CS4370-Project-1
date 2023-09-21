@@ -34,7 +34,9 @@ public class RAImpl implements RA {
      * present in rel.
      */
     @Override
-    public Relation project(Relation rel, List<String> attrs);
+    public Relation project(Relation rel, List<String> attrs) {
+        return new RelationImpl(rel.getName(), rel.getAttrs(), rel.getTypes());
+    }
 
     /**
      * Performs the union operation on the relations rel1 and rel2.
@@ -44,7 +46,10 @@ public class RAImpl implements RA {
      * @throws IllegalArgumentException If rel1 and rel2 are not compatible.
      */
     @Override
-    public Relation union(Relation rel1, Relation rel2);
+    public Relation union(Relation rel1, Relation rel2){
+        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes());
+
+    }
 
     /**
      * Performs the set difference operaion on the relations rel1 and rel2.
@@ -54,7 +59,10 @@ public class RAImpl implements RA {
      * @throws IllegalArgumentException If rel1 and rel2 are not compatible.
      */
     @Override
-    public Relation diff(Relation rel1, Relation rel2);
+    public Relation diff(Relation rel1, Relation rel2){
+        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes());
+
+    }
 
     /**
      * Renames the attributes in origAttr of relation rel to corresponding 
@@ -66,7 +74,10 @@ public class RAImpl implements RA {
      * rel or origAttr and renamedAttr do not have matching argument counts.
      */
     @Override
-    public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr);
+    public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr){
+        return new RelationImpl(rel.getName(), rel.getAttrs(), rel.getTypes());
+
+    }
 
     /**
      * Performs cartisian product on relations rel1 and rel2.
@@ -76,7 +87,31 @@ public class RAImpl implements RA {
      * @throws IllegalArgumentException if rel1 and rel2 have common attibutes.
      */
     @Override
-    public Relation cartesianProduct(Relation rel1, Relation rel2);
+    public Relation cartesianProduct(Relation rel1, Relation rel2){
+        String mergeName = rel1.getName() + " x " + rel2.getName();
+
+        List<String> mergeAttr = new ArrayList<>();
+        mergeAttr.addAll(rel1.getAttrs());
+        mergeAttr.addAll(rel2.getAttrs());
+
+        List<Type> mergeType = new ArrayList<>();
+        mergeType.addAll(rel1.getTypes());
+        mergeType.addAll(rel2.getTypes());
+
+       Relation newTable = new RelationImpl(mergeName, mergeAttr, mergeType);
+
+       List<List<Cell>> newRelation = new ArrayList<>();
+        for (List<Cell> row1 : rel1.getRows()) {
+            for (List<Cell> row2 : rel2.getRows()) {
+                List<Cell> mergeRow = new ArrayList<>();
+                mergeRow.addAll(row1);
+                mergeRow.addAll(row2);
+                newRelation.add(mergeRow);
+            } // for 
+        } // for
+
+        return new RelationImpl(newTable.getName(), newTable.getAttrs(), newTable.getTypes(), newRelation);
+    }
 
     /**
      * Peforms natural join on relations rel1 and rel2.
@@ -84,7 +119,10 @@ public class RAImpl implements RA {
      * @return The resulting relation after applying natural join.
      */
     @Override
-    public Relation join(Relation rel1, Relation rel2);
+    public Relation join(Relation rel1, Relation rel2){
+        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes());
+
+    }
 
     /**
      * Performs theta join on relations rel1 and rel2 with predicate p.
@@ -92,6 +130,9 @@ public class RAImpl implements RA {
      * @return The resulting relation after applying theta join.
      */
     @Override
-    public Relation join(Relation rel1, Relation rel2, Predicate p);
+    public Relation join(Relation rel1, Relation rel2, Predicate p){
+        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes());
+
+    }
     
 }
