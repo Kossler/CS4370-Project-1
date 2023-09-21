@@ -62,13 +62,6 @@ public class Cell {
         return (String) data;
     }
 
-    /**
-     * Return the cell's type.
-     */
-    public Type getType() {
-        return type;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

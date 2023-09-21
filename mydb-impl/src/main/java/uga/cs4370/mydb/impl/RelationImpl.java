@@ -21,6 +21,13 @@ public class RelationImpl implements Relation {
         this.rows = new ArrayList<>();
     }
 
+    public RelationImpl(String name, List<String> attrs, List<Type> types, List<List<Cell>> rows) {
+        this.name = name;
+        this.attrs = attrs;
+        this.types = types;
+        this.rows = rows;
+    }
+
     @Override
     public String getName() {
         return name;
@@ -81,11 +88,31 @@ public class RelationImpl implements Relation {
             throw new IllegalArgumentException("The number of cells doesn't match the relation's number of columns.");
         }
         for (int i = 0; i < cells.size(); i++) {
-            if (cells.get(i).getType() != types.get(i)) {
-                throw new IllegalArgumentException("The cell type doesn't match the column type.");
+            Type findType = findType(cells.get(i));
+            if (findType != types.get(i)) {
+                throw new IllegalArgumentException("Cell type does not match column type.");
             }
         }
         rows.add(new ArrayList<>(cells));
+    }
+
+    private Type findType(Cell cell) {
+        try {
+            cell.getAsInt();
+            return Type.INTEGER;
+        } catch (Exception e1) {
+            try {
+                cell.getAsDouble();
+                return Type.DOUBLE;
+            } catch (Exception e2) {
+                try {
+                    cell.getAsString();
+                    return Type.STRING;
+                } catch (Exception e3) {
+                    throw new IllegalStateException("Invalid cell type");
+                }
+            }
+        }
     }
 
     @Override
