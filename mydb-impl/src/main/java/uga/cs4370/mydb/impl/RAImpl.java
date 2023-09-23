@@ -52,7 +52,7 @@ public class RAImpl implements RA {
     }
 
     /**
-     * Performs the set difference operaion on the relations rel1 and rel2.
+     * Performs the set difference operation on the relations rel1 and rel2.
      * 
      * @return The resulting relation after applying the set difference operation.
      * 
@@ -60,8 +60,30 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation diff(Relation rel1, Relation rel2){
-        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes());
-
+        try {
+            // Check that the relations are compatible
+            if(rel1.getAttrs == rel2.getAttrs && rel1.getTypes == rel2.getTypes) {
+                String newRelation = "Relation After Set Difference";
+                Relation newTable = new RelationImpl(newRelation, rel1.getAttrs, rel1.getTypes);
+                List<List<Cell>> newRows;
+                for(List<Cell> eachRow1 : rel1.getRows()) {
+                    boolean equal = false;
+                    for(List<Cell> eachRow2 : rel2.getRows()) {
+                        if(eachRow1.equals(eachRow2)) {
+                            equal=true;
+                            break;
+                        }
+                    if(!equal) {
+                        newRows.add(eachRow1);
+                    }
+                    } 
+                }
+            }
+        }
+        catch (IllegalArgumentException iae) {
+            System.out.println("rel1 and rel2 are not compatible");
+        }    
+        return new RelationImpl(newTable.getName(), newTable.getAttrs(), newTable.getTypes(),newRows);
     }
 
     /**
@@ -75,6 +97,33 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr){
+        try  {
+            // Checking conditions
+            boolean present = true;
+            boolean size = false;
+            if (origAttr.getSize() == renamedAttr.getSize()) {
+                size=true;
+                for (String attribute : origAttr) {
+                    if(!(rel.hasAttr(attribute))) {
+                        present = false;
+                        break;
+                    } 
+                }
+            } 
+            if(present && size) {
+                for (i=0; i < origAttr.getSize(); i++) {
+                    rel1.getAttrs().set(i,renamedAttr.get(i));
+                }
+            }
+
+        } catch (IllegalArgumentException iae) {
+            if(!present) {
+                System.out.println("Attributes in origAttr are not present in rel attributes.");
+            }
+            if (!size) {
+                System.out.println("origAttr and renamedAttr do not have matching argument counts");
+            }
+        }
         return new RelationImpl(rel.getName(), rel.getAttrs(), rel.getTypes());
 
     }
