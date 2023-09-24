@@ -60,12 +60,12 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation diff(Relation rel1, Relation rel2){
+        String newRelation = "Relation After Set Difference";
+        Relation newTable = new RelationImpl(newRelation, rel1.getAttrs(), rel1.getTypes());
+        List<List<Cell>> newRows = new ArrayList<>();
         try {
             // Check that the relations are compatible
-            if(rel1.getAttrs == rel2.getAttrs && rel1.getTypes == rel2.getTypes) {
-                String newRelation = "Relation After Set Difference";
-                Relation newTable = new RelationImpl(newRelation, rel1.getAttrs, rel1.getTypes);
-                List<List<Cell>> newRows;
+            if(rel1.getAttrs() == rel2.getAttrs() && rel1.getTypes() == rel2.getTypes()) {  
                 for(List<Cell> eachRow1 : rel1.getRows()) {
                     boolean equal = false;
                     for(List<Cell> eachRow2 : rel2.getRows()) {
@@ -83,7 +83,7 @@ public class RAImpl implements RA {
         catch (IllegalArgumentException iae) {
             System.out.println("rel1 and rel2 are not compatible");
         }    
-        return new RelationImpl(newTable.getName(), newTable.getAttrs(), newTable.getTypes(),newRows);
+        return new RelationImpl(newTable.getName(), newTable.getAttrs(), newTable.getTypes(), newRows);
     }
 
     /**
@@ -97,11 +97,11 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr){
-        try  {
             // Checking conditions
             boolean present = true;
             boolean size = false;
-            if (origAttr.getSize() == renamedAttr.getSize()) {
+        try  {
+            if (origAttr.size() == renamedAttr.size()) {
                 size=true;
                 for (String attribute : origAttr) {
                     if(!(rel.hasAttr(attribute))) {
@@ -111,8 +111,8 @@ public class RAImpl implements RA {
                 }
             } 
             if(present && size) {
-                for (i=0; i < origAttr.getSize(); i++) {
-                    rel1.getAttrs().set(i,renamedAttr.get(i));
+                for (int i = 0; i < origAttr.size(); i++) {
+                    rel.getAttrs().set(i,renamedAttr.get(i));
                 }
             }
 
