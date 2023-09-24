@@ -91,22 +91,15 @@ public class App
         System.out.println("Table 2");
 
         table2.print();
-<<<<<<< HEAD
-/**
-=======
 
->>>>>>> branch1
+/**
         System.out.println("");
         System.out.println("Start CP");
         tester.cartesianProduct(table, table2).print();
         System.out.println("End CP");
         // cartesian product check 
-
-<<<<<<< HEAD
 */
-=======
 
->>>>>>> branch1
 
         System.out.println("");
         System.out.println("Start Join");
