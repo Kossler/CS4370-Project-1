@@ -134,43 +134,48 @@ public class RAImpl implements RA {
         } // for
        // check for common attributes and store in list
 
-       String mergeName = rel1.getName() + " x " + rel2.getName();
+       if (rel1Index.size() == 0) {        // no common atttr -> return cp
+        return this.cartesianProduct(rel1, rel2);
+       } else {
+
+            String mergeName = rel1.getName() + " x " + rel2.getName();
 
 
-        List<String> mergeAttr = new ArrayList<>();
-        mergeAttr.addAll(rel1.getAttrs());
-        mergeAttr.addAll(rel2.getAttrs());
+            List<String> mergeAttr = new ArrayList<>();
+            mergeAttr.addAll(rel1.getAttrs());
+            mergeAttr.addAll(rel2.getAttrs());
 
-        List<Type> mergeType = new ArrayList<>();
-        mergeType.addAll(rel1.getTypes());
-        mergeType.addAll(rel2.getTypes());
-        
-        for (int i = 0; i < rel1Index.size(); i++) {
-            int removeAttr =  (int)rel1.getAttrs().size() + (int)rel2Index.get(i);
-            mergeAttr.remove(removeAttr);
-        } // for 
-        // removes common attribute
-
-       Relation newTable = new RelationImpl(mergeName, mergeAttr, mergeType);
-
-
-       List<List<Cell>> newRelation = new ArrayList<>();
-        for (List<Cell> row1 : rel1.getRows()) {
-            for (List<Cell> row2 : rel2.getRows()) {
-                List<Cell> mergeRow = new ArrayList<>();
-                for (int i = 0; i < rel1Index.size(); i++) {
-                    if ( row1.get(rel1Index.get(i)).equals(row2.get(rel2Index.get(i))) ) {
-                        row2.remove((int)rel2Index.get(i));
-                        mergeRow.addAll(row1);
-                        mergeRow.addAll(row2);
-                        newRelation.add(mergeRow);
-                    } // if
-                } // for
-                // checks if common attribute is same 
+            List<Type> mergeType = new ArrayList<>();
+            mergeType.addAll(rel1.getTypes());
+            mergeType.addAll(rel2.getTypes());
+            
+            for (int i = 0; i < rel1Index.size(); i++) {
+                int removeAttr =  (int)rel1.getAttrs().size() + (int)rel2Index.get(i);
+                mergeAttr.remove(removeAttr);
             } // for 
-        } // for
+            // removes common attribute
 
-       return new RelationImpl(newTable.getName(), newTable.getAttrs(), newTable.getTypes(), newRelation);
+        Relation newTable = new RelationImpl(mergeName, mergeAttr, mergeType);
+
+
+        List<List<Cell>> newRelation = new ArrayList<>();
+            for (List<Cell> row1 : rel1.getRows()) {
+                for (List<Cell> row2 : rel2.getRows()) {
+                    List<Cell> mergeRow = new ArrayList<>();
+                    for (int i = 0; i < rel1Index.size(); i++) {
+                        if ( row1.get(rel1Index.get(i)).equals(row2.get(rel2Index.get(i))) ) {
+                            row2.remove((int)rel2Index.get(i));
+                            mergeRow.addAll(row1);
+                            mergeRow.addAll(row2);
+                            newRelation.add(mergeRow);
+                        } // if
+                    } // for
+                    // checks if common attribute is same 
+                } // for 
+            } // for
+
+        return new RelationImpl(newTable.getName(), newTable.getAttrs(), newTable.getTypes(), newRelation);
+       } // if
 
     }
 
