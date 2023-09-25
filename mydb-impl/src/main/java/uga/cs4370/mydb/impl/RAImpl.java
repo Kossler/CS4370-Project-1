@@ -105,31 +105,30 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation diff(Relation rel1, Relation rel2){
-        String newRelation = "Relation After Set Difference";
-        Relation newTable = new RelationImpl(newRelation, rel1.getAttrs(), rel1.getTypes());
+        String newRelation = rel1.getName() + " - " + rel2.getName();
         List<List<Cell>> newRows = new ArrayList<>();
-        try {
-            // Check that the relations are compatible
-            if(rel1.getAttrs() == rel2.getAttrs() && rel1.getTypes() == rel2.getTypes()) {  
-                for(List<Cell> eachRow1 : rel1.getRows()) {
-                    boolean equal = false;
-                    for(List<Cell> eachRow2 : rel2.getRows()) {
-                        if(eachRow1.equals(eachRow2)) {
-                            equal=true;
-                            break;
-                        }
-                    if(!equal) {
-                        newRows.add(eachRow1);
-                    }
-                    } 
+    
+        // Check that the relations are compatible
+        if(!rel1.getAttrs().equals(rel2.getAttrs()) || !rel1.getTypes().equals(rel2.getTypes())) {
+            throw new IllegalArgumentException("rel1 and rel2 are not compatible");
+        }
+    
+        for(List<Cell> eachRow1 : rel1.getRows()) {
+            boolean equal = false;
+            for(List<Cell> eachRow2 : rel2.getRows()) {
+                if(eachRow1.equals(eachRow2)) {
+                    equal = true;
+                    break;
                 }
             }
+            if(!equal) {
+                newRows.add(new ArrayList<>(eachRow1));
+            }
         }
-        catch (IllegalArgumentException iae) {
-            System.out.println("rel1 and rel2 are not compatible");
-        }    
-        return new RelationImpl(newTable.getName(), newTable.getAttrs(), newTable.getTypes(), newRows);
+    
+        return new RelationImpl(newRelation, rel1.getAttrs(), rel1.getTypes(), newRows);
     }
+    
 
     /**
      * Renames the attributes in origAttr of relation rel to corresponding 
