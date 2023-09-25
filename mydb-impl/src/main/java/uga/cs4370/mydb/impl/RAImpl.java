@@ -84,15 +84,15 @@ public class RAImpl implements RA {
 
         for (List<Cell> row1 : rel1.getRows()) {
             newRelation.add(new ArrayList<>(row1));
-            }
-
-        for (List<Cell> row2 : rel2.getRows()) {
-                if (rel1.getRows().equals(row2) == false) {
-                    newRelation.add(new ArrayList<>(row2));
-                }
         }
 
-        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes(), newRelation);
+        for (List<Cell> row2 : rel2.getRows()) {
+            newRelation.add(new ArrayList<>(row2));
+        }
+
+        Relation tempRelation = new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes(), newRelation);
+
+        return distinct(tempRelation);
 
     }
 
