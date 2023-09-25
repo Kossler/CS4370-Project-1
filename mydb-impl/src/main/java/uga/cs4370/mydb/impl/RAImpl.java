@@ -302,5 +302,15 @@ public class RAImpl implements RA {
         return new RelationImpl(mergeName, mergeAttr, mergeType, newRelation);
     }
 
+    public Relation distinct(Relation rel) {
+        String newName = "Distinct " + rel.getName();
+        List<List<Cell>> distinctRows = new ArrayList<>();
+        for (List<Cell> row : rel.getRows()) {
+            if (!distinctRows.contains(row)) {
+                distinctRows.add(row);
+            }
+        }
 
+        return new RelationImpl(newName, rel.getAttrs(), rel.getTypes(), distinctRows);
+    }
 }

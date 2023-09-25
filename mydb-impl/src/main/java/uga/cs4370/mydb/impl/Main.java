@@ -169,26 +169,37 @@ public class Main {
         question6.print();
 
         //Question 7
-        Relation studentEnrollment = RA.join(studentsTable, enrollmentTable);
-        Predicate p7 = new StringEqual(studentEnrollment.getAttrIndex("Major"), "Computer Science");
-        studentEnrollment = RA.select(studentEnrollment, p7);
-        p7 = new StringEqual(studentEnrollment.getAttrIndex("Grade"), "F");
-        studentEnrollment = RA.select(studentEnrollment, p7);
+        Relation question7 = RA.join(studentsTable, enrollmentTable);
+        Predicate p7 = new StringEqual(question7.getAttrIndex("Major"), "Computer Science");
+        question7 = RA.select(question7, p7);
+        p7 = new StringEqual(question7.getAttrIndex("Grade"), "F");
+        question7 = RA.select(question7, p7);
         filterAttr = new ArrayList<>();
         filterAttr.add("StudentID");
         filterAttr.add("FName");
         filterAttr.add("LName");
-        studentEnrollment = RA.project(studentEnrollment, filterAttr);
-        studentEnrollment = new RelationImpl("Question 7", studentEnrollment.getAttrs(), studentEnrollment.getTypes(), studentEnrollment.getRows());
-        studentEnrollment.print();
+        question7 = RA.project(question7, filterAttr);
+        question7 = new RelationImpl("Question 7", question7.getAttrs(), question7.getTypes(), question7.getRows());
+        question7.print();
 
         // Question 8
-        studentEnrollment = RA.join(studentsTable, enrollmentTable);
-        Predicate p8 = new StringEqual(studentEnrollment.getAttrIndex("Major"), "Computer Science");
-        studentEnrollment = RA.select(studentEnrollment, p8);
+        Relation question8 = RA.join(studentsTable, enrollmentTable);
+        Predicate p8 = new StringEqual(question8.getAttrIndex("Major"), "Computer Science");
+        question8 = RA.select(question8, p8);
         filterAttr = new ArrayList<>();
         filterAttr.add("CourseID");
-        Relation studentEnrollmentCourses = RA.project(studentEnrollment, filterAttr);
+        question8 = RA.project(question8, filterAttr);
+        RAImpl raImpl = new RAImpl();
+        question8 = raImpl.distinct(question8);
+        question8 = RA.join(question8, teachesTable);
+        question8 = RA.join(question8, professorsTable);
+        filterAttr = new ArrayList<>();
+        filterAttr.add("ProfessorID");
+        filterAttr.add("FName");
+        filterAttr.add("LName");
+        question8 = RA.project(question8, filterAttr);
+        question8 = new RelationImpl("Question 8", question8.getAttrs(), question8.getTypes(), question8.getRows());
+        question8.print();
     }
 
     public static List<List<Cell>> populateStudents() {
@@ -290,8 +301,8 @@ public class Main {
         List<Cell> enrollment4 = new ArrayList<>();
         enrollment4.add(new Cell(4));
         enrollment4.add(new Cell(6789));
-        enrollment4.add(new Cell(1103));
-        enrollment4.add(new Cell("2"));
+        enrollment4.add(new Cell(1101));
+        enrollment4.add(new Cell("B"));
 
         enrollment.add(enrollment4);
 
