@@ -283,6 +283,13 @@ public class RAImpl implements RA {
         return tempRelation;
     }
 
+
+    /**
+     * Filters out redundant rows to make relation distinct.
+     * 
+     * @param rel Relation you want to make distinct
+     * @return The resulting distinct relation
+     */
     public Relation distinct(Relation rel) {
         String newName = "Distinct " + rel.getName();
         List<List<Cell>> distinctRows = new ArrayList<>();
