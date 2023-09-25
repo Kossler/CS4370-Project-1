@@ -224,10 +224,22 @@ public class Main {
         //union
         Relation studentUnion = RA.union(studentsTable, students2Table);
         studentUnion.print();
-
+/* 
         //cartiesian product 
         Relation cpCheck = RA.cartesianProduct(coursesTable, enrollmentTable);
         cpCheck.print();
+*/
+        //rename
+        RA newTable = new RAImpl();
+        List<String> newAttrs = new ArrayList<>();
+        newAttrs.add("Student's ID");
+        newAttrs.add("First Name");
+        newAttrs.add("Last Name");
+        newAttrs.add("Birthday");
+        newAttrs.add("Student Major");
+        Relation renameCheck = newTable.rename(studentsTable, studentsTable.getAttrs(), newAttrs);
+        renameCheck.print();
+
 
     }
 

@@ -140,7 +140,7 @@ public class RAImpl implements RA {
      * rel or origAttr and renamedAttr do not have matching argument counts.
      */
     @Override
-    public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr){
+    public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr) {
             // Checking conditions
             boolean present = true;
             boolean size = false;
