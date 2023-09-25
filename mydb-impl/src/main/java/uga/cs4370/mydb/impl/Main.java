@@ -114,6 +114,16 @@ public class Main {
         question2.print();
 
         // Question 3
+        RA = new RAImpl();
+        Relation question3 = RA.join(coursesTable, enrollmentTable);
+        Predicate p3 = new IntegerEqual(question3.getAttrIndex("StudentID"), 1234);
+        question3 = RA.select(question3, p3);
+        filterAttr = new ArrayList<>();
+        filterAttr.add("CName");
+        question3 = RA.project(question3, filterAttr);
+        question3 = new RelationImpl("Courses Enrolled", question3.getAttrs(), question3.getTypes(), question3.getRows());
+        question3.print();
+
         
 
     }

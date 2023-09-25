@@ -214,64 +214,62 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation join(Relation rel1, Relation rel2) {
-        List<Integer> rel1Index = new ArrayList<>();
-        List<Integer> rel2Index = new ArrayList<>();
+        List<Integer> commonAttrsFromRel1 = new ArrayList<>();
+        List<Integer> commonAttrsFromRel2 = new ArrayList<>();
 
-
+        // Find common attributes
         for (int a = 0; a < rel1.getAttrs().size(); a++) {
             for (int b = 0; b < rel2.getAttrs().size(); b++) {
                 if (rel1.getAttrs().get(a).equals(rel2.getAttrs().get(b))) {
-                    rel1Index.add(a);
-                    rel2Index.add(b);
-                } // if
-            } // for
-        } // for
-       // check for common attributes and store in list
+                    commonAttrsFromRel1.add(a);
+                    commonAttrsFromRel2.add(b);
+                }
+            }
+        }
 
-       if (rel1Index.size() == 0) {        // no common atttr -> return cp
-        return this.cartesianProduct(rel1, rel2);
-       } else {
+        // If no common attributes, return cartesian product
+        if (commonAttrsFromRel1.isEmpty()) {
+            return this.cartesianProduct(rel1, rel2);
+        }
 
-            String mergeName = rel1.getName() + " x " + rel2.getName();
+        String mergeName = rel1.getName() + " x " + rel2.getName();
+        List<String> mergedAttrs = new ArrayList<>(rel1.getAttrs());
+        mergedAttrs.addAll(rel2.getAttrs());
+        List<Type> mergedTypes = new ArrayList<>(rel1.getTypes());
+        mergedTypes.addAll(rel2.getTypes());
 
+        // Remove duplicated attributes and their corresponding types
+        for (int index : commonAttrsFromRel2) {
+            mergedAttrs.remove(rel1.getAttrs().size() + index);
+            mergedTypes.remove(rel1.getTypes().size() + index);
+        }
 
-            List<String> mergeAttr = new ArrayList<>();
-            mergeAttr.addAll(rel1.getAttrs());
-            mergeAttr.addAll(rel2.getAttrs());
+        List<List<Cell>> mergedRows = new ArrayList<>();
+        for (List<Cell> row1 : rel1.getRows()) {
+            for (List<Cell> row2 : rel2.getRows()) {
+                boolean shouldMerge = true;
+                for (int i = 0; i < commonAttrsFromRel1.size(); i++) {
+                    if (!row1.get(commonAttrsFromRel1.get(i)).equals(row2.get(commonAttrsFromRel2.get(i)))) {
+                        shouldMerge = false;
+                        break;
+                    }
+                }
+                
+                if (shouldMerge) {
+                    List<Cell> mergedRow = new ArrayList<>(row1);
+                    for (int i = 0; i < row2.size(); i++) {
+                        if (!commonAttrsFromRel2.contains(i)) {
+                            mergedRow.add(row2.get(i));
+                        }
+                    }
+                    mergedRows.add(mergedRow);
+                }
+            }
+        }
 
-            List<Type> mergeType = new ArrayList<>();
-            mergeType.addAll(rel1.getTypes());
-            mergeType.addAll(rel2.getTypes());
-            
-            for (int i = 0; i < rel1Index.size(); i++) {
-                int removeAttr =  (int)rel1.getAttrs().size() + (int)rel2Index.get(i);
-                mergeAttr.remove(removeAttr);
-            } // for 
-            // removes common attribute
-
-        Relation newTable = new RelationImpl(mergeName, mergeAttr, mergeType);
-
-
-        List<List<Cell>> newRelation = new ArrayList<>();
-            for (List<Cell> row1 : rel1.getRows()) {
-                for (List<Cell> row2 : rel2.getRows()) {
-                    List<Cell> mergeRow = new ArrayList<>();
-                    for (int i = 0; i < rel1Index.size(); i++) {
-                        if ( row1.get(rel1Index.get(i)).equals(row2.get(rel2Index.get(i))) ) {
-                            row2.remove((int)rel2Index.get(i));
-                            mergeRow.addAll(row1);
-                            mergeRow.addAll(row2);
-                            newRelation.add(mergeRow);
-                        } // if
-                    } // for
-                    // checks if common attribute is same 
-                } // for 
-            } // for
-
-        return new RelationImpl(newTable.getName(), newTable.getAttrs(), newTable.getTypes(), newRelation);
-       } // if
-
+        return new RelationImpl(mergeName, mergedAttrs, mergedTypes, mergedRows);
     }
+
 
     /**
      * Performs theta join on relations rel1 and rel2 with predicate p.
