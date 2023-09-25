@@ -168,7 +168,7 @@ public class RAImpl implements RA {
                 System.out.println("origAttr and renamedAttr do not have matching argument counts");
             }
         }
-        return new RelationImpl(rel.getName(), rel.getAttrs(), rel.getTypes());
+        return new RelationImpl(rel.getName(), rel.getAttrs(), rel.getTypes(), rel.getRows());
 
     }
 
