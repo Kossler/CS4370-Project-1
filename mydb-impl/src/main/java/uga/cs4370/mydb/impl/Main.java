@@ -217,18 +217,14 @@ public class Main {
         question8 = new RelationImpl("Question 8", question8.getAttrs(), question8.getTypes(), question8.getRows());
         question8.print();
 
-
-        //System.out.println("STUDENT2 TABLE");
-        //students2Table.print();
-
         //union
         Relation studentUnion = RA.union(studentsTable, students2Table);
         studentUnion.print();
-/* 
+
         //cartiesian product 
-        Relation cpCheck = RA.cartesianProduct(coursesTable, enrollmentTable);
+        Relation cpCheck = RA.cartesianProduct(coursesTable, professorsTable);
         cpCheck.print();
-*/
+
         //rename
         RA newTable = new RAImpl();
         List<String> newAttrs = new ArrayList<>();
@@ -241,6 +237,9 @@ public class Main {
         renameCheck.print();
 
 
+        // join theta 
+        Relation joinThetaCheck = RA.join(coursesTable, professorsTable);
+        joinThetaCheck.print();
     }
 
     public static List<List<Cell>> populateStudents() {
