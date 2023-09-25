@@ -277,29 +277,10 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation join(Relation rel1, Relation rel2, Predicate p) {
-        String mergeName = rel1.getName() + " x " + rel2.getName();
+        Relation tempRelation = cartesianProduct(rel1, rel2);
+        tempRelation = select(tempRelation, p);
 
-        List<String> mergeAttr = new ArrayList<>();
-        mergeAttr.addAll(rel1.getAttrs());
-        mergeAttr.addAll(rel2.getAttrs());
-
-        List<Type> mergeType = new ArrayList<>();
-        mergeType.addAll(rel1.getTypes());
-        mergeType.addAll(rel2.getTypes());
-
-        List<List<Cell>> newRelation = new ArrayList<>();
-        for (List<Cell> row1 : rel1.getRows()) {
-            for (List<Cell> row2 : rel2.getRows()) {
-                List<Cell> mergedRow = new ArrayList<>(row1);
-                mergedRow.addAll(row2);
-
-                if (p.check(mergedRow)) {
-                    newRelation.add(mergedRow);
-                }
-            }
-        }
-
-        return new RelationImpl(mergeName, mergeAttr, mergeType, newRelation);
+        return tempRelation;
     }
 
     public Relation distinct(Relation rel) {
