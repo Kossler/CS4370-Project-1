@@ -12,20 +12,21 @@ public class RelationImpl implements Relation {
     private String name;
     private List<String> attrs;
     private List<Type> types;
-    private List<List<Cell>> rows;
+    private List<List<Cell>> rows = new ArrayList<>();
 
     public RelationImpl(String name, List<String> attrs, List<Type> types) {
         this.name = name;
         this.attrs = attrs;
         this.types = types;
-        this.rows = new ArrayList<>();
     }
 
     public RelationImpl(String name, List<String> attrs, List<Type> types, List<List<Cell>> rows) {
         this.name = name;
         this.attrs = attrs;
         this.types = types;
-        this.rows = rows;
+        for (int i = 0; i  < rows.size(); i++) {
+            insert(rows.get(i));
+        }
     }
 
     @Override
@@ -96,7 +97,7 @@ public class RelationImpl implements Relation {
         rows.add(new ArrayList<>(cells));
     }
 
-    private Type findType(Cell cell) {
+    public Type findType(Cell cell) {
         try {
             cell.getAsInt();
             return Type.INTEGER;
@@ -117,11 +118,51 @@ public class RelationImpl implements Relation {
 
     @Override
     public void print() {
+        int cellWidth = 20; 
+        String horizontalBorder = "+" + "-".repeat(cellWidth);
+    
         System.out.println(name);
-        System.out.println(attrs);
-        for (List<Cell> row : rows) {
-            System.out.println(row);
+    
+        // Print top border
+        for (int i = 0; i < attrs.size(); i++) {
+            System.out.print(horizontalBorder);
         }
+        System.out.println("+");
+    
+        // Print attributes
+        System.out.print("|");
+        for (String attr : attrs) {
+            // Truncate or pad the attribute to fit the cell width
+            String formattedAttr = (attr + " ".repeat(cellWidth)).substring(0, cellWidth);
+            System.out.print(formattedAttr + "|");
+        }
+        System.out.println();
+    
+        // Print attributes border
+        for (int i = 0; i < attrs.size(); i++) {
+            System.out.print(horizontalBorder);
+        }
+        System.out.println("+");
+    
+        for (List<Cell> row : rows) {
+            System.out.print("|");
+            for (Cell cell : row) {
+                String cellValue = cell.toString();
+                String formattedCellValue = (cellValue + " ".repeat(cellWidth)).substring(0, cellWidth);
+                System.out.print(formattedCellValue + "|");
+            }
+            System.out.println();
+    
+            // Print row border
+            for (int i = 0; i < row.size(); i++) {
+                System.out.print(horizontalBorder);
+            }
+            System.out.println("+");
+        }
+        System.out.println("");
     }
+    
+    
+    
 }  
 

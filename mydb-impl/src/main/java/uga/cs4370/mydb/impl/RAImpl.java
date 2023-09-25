@@ -35,8 +35,33 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation project(Relation rel, List<String> attrs) {
-        return new RelationImpl(rel.getName(), rel.getAttrs(), rel.getTypes());
+        List<List<Cell>> newRelation = new ArrayList<>();
+        List<String> presentAttrs = rel.getAttrs();
+        List<Type> presentTypes = rel.getTypes();
+        List<Type> projectedTypes = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
+
+        for (String attr : attrs) {
+            if (!presentAttrs.contains(attr)) {
+                throw new IllegalArgumentException("Attributes in attrs are not present in relation.");
+            } else {
+                int index = presentAttrs.indexOf(attr);
+                indices.add(index);
+                projectedTypes.add(presentTypes.get(index));
+            }
+        }
+
+        for (List<Cell> row : rel.getRows()) {
+            List<Cell> newRow = new ArrayList<>();
+            for (int index : indices) {
+                newRow.add(row.get(index));
+            }
+            newRelation.add(newRow);
+        }
+
+        return new RelationImpl(rel.getName(), attrs, projectedTypes, newRelation);
     }
+
 
     /**
      * Performs the union operation on the relations rel1 and rel2.
@@ -47,7 +72,27 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation union(Relation rel1, Relation rel2){
-        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes());
+        List<List<Cell>> newRelation = new ArrayList<>();
+        List<String> attrsRel1 = rel1.getAttrs();
+        List<String> attrsRel2 = rel2.getAttrs();
+        List<Type> typesRel1 = rel1.getTypes();
+        List<Type> typesRel2 = rel2.getTypes();
+
+        if (attrsRel1.size() != attrsRel2.size() || typesRel1.equals(typesRel2) == false) {
+            throw new IllegalArgumentException("Relation 1 and relation 2 are not compatible.");
+        }
+
+        for (List<Cell> row1 : rel1.getRows()) {
+            newRelation.add(new ArrayList<>(row1));
+            }
+
+        for (List<Cell> row2 : rel2.getRows()) {
+                if (rel1.getRows().equals(row2) == false) {
+                    newRelation.add(new ArrayList<>(row2));
+                }
+        }
+
+        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes(), newRelation);
 
     }
 
@@ -234,10 +279,31 @@ public class RAImpl implements RA {
      * @return The resulting relation after applying theta join.
      */
     @Override
-    public Relation join(Relation rel1, Relation rel2, Predicate p){
-        return new RelationImpl(rel1.getName(), rel1.getAttrs(), rel1.getTypes());
+    public Relation join(Relation rel1, Relation rel2, Predicate p) {
+        String mergeName = rel1.getName() + " x " + rel2.getName();
 
+        List<String> mergeAttr = new ArrayList<>();
+        mergeAttr.addAll(rel1.getAttrs());
+        mergeAttr.addAll(rel2.getAttrs());
 
+        List<Type> mergeType = new ArrayList<>();
+        mergeType.addAll(rel1.getTypes());
+        mergeType.addAll(rel2.getTypes());
+
+        List<List<Cell>> newRelation = new ArrayList<>();
+        for (List<Cell> row1 : rel1.getRows()) {
+            for (List<Cell> row2 : rel2.getRows()) {
+                List<Cell> mergedRow = new ArrayList<>(row1);
+                mergedRow.addAll(row2);
+
+                if (p.check(mergedRow)) {
+                    newRelation.add(mergedRow);
+                }
+            }
+        }
+
+        return new RelationImpl(mergeName, mergeAttr, mergeType, newRelation);
     }
+
 
 }

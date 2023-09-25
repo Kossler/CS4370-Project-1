@@ -1,233 +1,280 @@
 package uga.cs4370.mydb.impl;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
-import uga.cs4370.mydb.Relation;
-import uga.cs4370.mydb.Cell;
-import uga.cs4370.mydb.Type;
-import uga.cs4370.mydb.RA;
-
+import uga.cs4370.mydb.*;
+import java.util.*;
 
 /**
  * Hello world!
  *
  */
-public class Main 
-{
-    public static void main( String[] args )
-    {
+public class Main {
+    public static void main( String[] args ) {
 
-        List<String> attr = new ArrayList<String>();
-        attr.add("sName");
-        attr.add("Age");
-        attr.add("Instructor");
+        // Student Table
+        List<String> studentAttrs = new ArrayList<>();
+        studentAttrs.add("StudentID");
+        studentAttrs.add("FName");
+        studentAttrs.add("LName");
+        studentAttrs.add("DoB");
+        studentAttrs.add("Major");
 
-        List<Type> type = new ArrayList<Type>();
-        type.add(Type.STRING);
-        type.add(Type.INTEGER);
-        type.add(Type.STRING);
+        List<Type> studentTypes = new ArrayList<>();
+        studentTypes.add(Type.INTEGER);
+        studentTypes.add(Type.STRING);
+        studentTypes.add(Type.STRING);
+        studentTypes.add(Type.STRING);
+        studentTypes.add(Type.STRING);
 
-       Cell row1cell1 = new Cell("John");
-       Cell row1cell2 = new Cell(25);
-       Cell row1cell3 = new Cell("Mr.Brown");
-       
-       Cell row2cell1 = new Cell("Sam");
-       Cell row2cell2 = new Cell(38);
-       Cell row2cell3 = new Cell("Mr.Adams");
+        // Courses Table
+        List<String> coursesAttrs = new ArrayList<>();
+        coursesAttrs.add("CourseID");
+        coursesAttrs.add("CName");
+        coursesAttrs.add("Credits");
 
-       Cell row3cell1 = new Cell("Ally");
-       Cell row3cell2 = new Cell(55);
-       Cell row3cell3 = new Cell("Mr.Smith");
+        List<Type> coursesTypes = new ArrayList<>();
+        coursesTypes.add(Type.INTEGER);
+        coursesTypes.add(Type.STRING);
+        coursesTypes.add(Type.INTEGER);
 
-       List<List<Cell>> list1 = List.of(
-                List.of(row1cell1 ,row1cell2, row1cell3), List.of(row2cell1 ,row2cell2, row2cell3), List.of(row3cell1 ,row3cell2, row3cell3)
-        );
-        // creates first table
+        // Enrollment Table
+        List<String> enrollmentAttrs = new ArrayList<>();
+        enrollmentAttrs.add("EnrollmentID");
+        enrollmentAttrs.add("StudentID");
+        enrollmentAttrs.add("CourseID");
+        enrollmentAttrs.add("Grade");
 
-        Relation table = new RelationImpl("Students", attr, type, list1);
+        List<Type> enrollmentTypes = new ArrayList<>();
+        enrollmentTypes.add(Type.INTEGER);
+        enrollmentTypes.add(Type.INTEGER);
+        enrollmentTypes.add(Type.INTEGER);
+        enrollmentTypes.add(Type.STRING);
 
+        // Professors Table
+        List<String> professorsAttrs = new ArrayList<>();
+        professorsAttrs.add("ProfessorID");
+        professorsAttrs.add("FName");
+        professorsAttrs.add("LName");
+        professorsAttrs.add("Department");
 
-        List<String> attr2 = new ArrayList<String>();
-        attr2.add("Instructor");
-        attr2.add("Number");
-        attr2.add("Salary");
-        attr2.add("Department");
+        List<Type> professorsTypes = new ArrayList<>();
+        professorsTypes.add(Type.INTEGER);
+        professorsTypes.add(Type.STRING);
+        professorsTypes.add(Type.STRING);
+        professorsTypes.add(Type.STRING);
 
-        List<Type> type2 = new ArrayList<Type>();
-        type.add(Type.STRING);
-        type.add(Type.INTEGER);
-        type.add(Type.INTEGER);
-        type.add(Type.STRING);
+        // Teaches Table
+        List<String> teachesAttrs = new ArrayList<>();
+        teachesAttrs.add("TeachID");
+        teachesAttrs.add("ProfessorID");
+        teachesAttrs.add("CourseID");
 
-        Cell trow1cell1 = new Cell("Mr.Brown");
-        Cell trow1cell2 = new Cell(25);
-        Cell trow1cell3 = new Cell(100000);
-        Cell trow1cell4 = new Cell("Physics");
+        List<Type> teachesTypes = new ArrayList<>();
+        teachesTypes.add(Type.INTEGER);
+        teachesTypes.add(Type.INTEGER);
+        teachesTypes.add(Type.INTEGER);       
         
-        Cell trow2cell1 = new Cell("Mr.Adams");
-        Cell trow2cell2 = new Cell(55);
-        Cell trow2cell3 = new Cell(200000);
-        Cell trow2cell4 = new Cell("Bio");
+        // Populate Tables
+        List<List<Cell>> students = populateStudents();
+        List<List<Cell>> courses = populateCourses();
+        List<List<Cell>> enrollment = populateEnrollment();
+        List<List<Cell>> professors = populateProfessors();
+        List<List<Cell>> teaches = populateTeaches();
+        
+        Relation studentsTable = new RelationImpl("Students", studentAttrs, studentTypes, students);
+        Relation coursesTable = new RelationImpl("Courses", coursesAttrs, coursesTypes, courses);
+        Relation enrollmentTable = new RelationImpl("Enrollment", enrollmentAttrs, enrollmentTypes, enrollment);
+        Relation professorsTable = new RelationImpl("Professors", professorsAttrs, professorsTypes, professors);
+        Relation teachesTable = new RelationImpl("Teaches", teachesAttrs, teachesTypes, teaches);
 
-        Cell trow3cell1 = new Cell("Mr.Smith");
-        Cell trow3cell2 = new Cell(38);
-        Cell trow3cell3 = new Cell(300000);
-        Cell trow3cell4 = new Cell("CS");
+        // Print Tables
+        studentsTable.print();
+        coursesTable.print();
+        enrollmentTable.print();
+        professorsTable.print();
+        teachesTable.print();
 
-        List<List<Cell>> list2 = List.of(
-                 List.of(trow1cell1 ,trow1cell2, trow1cell3, trow1cell4), List.of(trow2cell1 ,trow2cell2, trow2cell3, trow2cell4), List.of(trow3cell1 ,trow3cell2, trow3cell3, trow3cell4)
-         );
-         // creates second table
+        // Question 1
+        Predicate p1 = new IntegerEqual(enrollmentTable.getAttrIndex("StudentID"), 1234);
+        RA RA = new RAImpl();
+        Relation question1 = RA.select(enrollmentTable, p1);
+        List<String> filterAttr = new ArrayList<>();
+        filterAttr.add("CourseID");
+        question1 = RA.project(question1, filterAttr);
+        question1.print();
 
-        Relation table2 = new RelationImpl("Instructors", attr2, type2, list2);
+        // Question 2
+        RA = new RAImpl();
+        Predicate p2 = new StringEqual(studentsTable.getAttrIndex("Major"), "Computer Science");
+        Relation question2 = RA.select(studentsTable, p2);
+        filterAttr = new ArrayList<>();
+        filterAttr.add("StudentID");
+        filterAttr.add("FName");
+        filterAttr.add("LName");
+        question2 = RA.project(question2, filterAttr);
+        question2.print();
 
-        RA tester = new RAImpl();
-
-        System.out.println("Table 1");
-
-        table.print();
-        System.out.println("Table 2");
-
-        table2.print();
-
-/**
-        System.out.println("");
-        System.out.println("Start CP");
-        tester.cartesianProduct(table, table2).print();
-        System.out.println("End CP");
-        // cartesian product check 
-*/
-
-
-        System.out.println("");
-        System.out.println("Start Join");
-        tester.join(table, table2).print();
-        System.out.println("End Join");
-        // join check 
-
-        /** 
-        List<String> fattr = new ArrayList<String>();
-        fattr.add("itemID");
-        fattr.add("itemName");
-        fattr.add("itemUnit");
-        fattr.add("companyId");
-
-        List<Type> ftype = new ArrayList<Type>();
-        type.add(Type.INTEGER);
-        type.add(Type.STRING);
-        type.add(Type.STRING);
-        type.add(Type.INTEGER);
-
-       Cell frow1cell1 = new Cell(1);
-       Cell frow1cell2 = new Cell("chex");
-       Cell frow1cell3 = new Cell("pcs");
-       Cell frow1cell4 = new Cell(16);
-       
-       Cell frow2cell1 = new Cell(6);
-       Cell frow2cell2 = new Cell("cheese");
-       Cell frow2cell3 = new Cell("pcs");
-       Cell frow2cell4 = new Cell(15);
-
-       Cell frow3cell1 = new Cell(2);
-       Cell frow3cell2 = new Cell("bn");
-       Cell frow3cell3 = new Cell("pcs");
-       Cell frow3cell4 = new Cell(15);
-
-       Cell frow4cell1 = new Cell(3);
-       Cell frow4cell2 = new Cell("munch");
-       Cell frow4cell3 = new Cell("pcs");
-       Cell frow4cell4 = new Cell(17);
-
-       Cell frow5cell1 = new Cell(4);
-       Cell frow5cell2 = new Cell("pot");
-       Cell frow5cell3 = new Cell("pcs");
-       Cell frow5cell4 = new Cell(15);
-
-       Cell frow6cell1 = new Cell(5);
-       Cell frow6cell2 = new Cell("Jaffa");
-       Cell frow6cell3 = new Cell("pcs");
-       Cell frow6cell4 = new Cell(18);
-
-       Cell frow7cell1 = new Cell(7);
-       Cell frow7cell2 = new Cell("salt");
-       Cell frow7cell3 = new Cell("pcs");
-       Cell frow7cell4 = new Cell(0);
-
-       List<List<Cell>> foodlist = List.of(
-                List.of(frow1cell1 ,frow1cell2, frow1cell3, frow1cell4), List.of(frow2cell1 ,frow2cell2, frow2cell3, frow2cell4),
-                List.of(frow3cell1 ,frow3cell2, frow3cell3, frow3cell4), List.of(frow4cell1 ,frow4cell2, frow4cell3, frow4cell4),
-                List.of(frow5cell1 ,frow5cell2, frow5cell3, frow5cell4), List.of(frow6cell1 ,frow6cell2, frow6cell3, frow6cell4),
-                List.of(frow7cell1 ,frow7cell2, frow7cell3, frow7cell4)
-        );
-        // creates first table
-        Relation foodTable = new RelationImpl("Food", fattr, ftype, foodlist);
-
-
-
-
-        List<String> cattr = new ArrayList<String>();
-        cattr.add("companyId");
-        cattr.add("companyName");
-        cattr.add("companyCity");
-
-
-
-        List<Type> ctype = new ArrayList<Type>();
-        type.add(Type.INTEGER);
-        type.add(Type.STRING);
-        type.add(Type.STRING);
-
-       Cell crow1cell1 = new Cell(18);
-       Cell crow1cell2 = new Cell("order all");
-       Cell crow1cell3 = new Cell("boston");
-
-       Cell crow2cell1 = new Cell(15);
-       Cell crow2cell2 = new Cell("jack hill");
-       Cell crow2cell3 = new Cell("london");
-
-       Cell crow3cell1 = new Cell(16);
-       Cell crow3cell2 = new Cell("akas foods");
-       Cell crow3cell3 = new Cell("dehil");
-
-       Cell crow4cell1 = new Cell(17);
-       Cell crow4cell2 = new Cell("foodies");
-       Cell crow4cell3 = new Cell("london");
-
-       Cell crow5cell1 = new Cell(19);
-       Cell crow5cell2 = new Cell("sip-n-bite");
-       Cell crow5cell3 = new Cell("ny");
-       
-
-       List<List<Cell>> complist = List.of(
-                List.of(crow1cell1 ,crow1cell2, crow1cell3), List.of(crow2cell1 ,crow2cell2, crow2cell3),
-                List.of(crow3cell1 ,crow3cell2, crow3cell3), List.of(crow4cell1 ,crow4cell2, crow4cell3),
-                List.of(crow5cell1 ,crow5cell2, crow5cell3)
-        );
-        // creates first table
-
-        Relation compTable = new RelationImpl("Company", cattr, ctype, complist);
-
-
-       foodTable.print();
-       System.out.println(foodTable.getAttrs());
-
-        compTable.print();
-        System.out.println(compTable.getAttrs());
-
-
-     System.out.println("");
-        System.out.println("Start JT");
-        tester.join(foodTable, compTable).print();
-        System.out.println("End JT");
-*/
-
-
-
-
-
-
+        // Question 3
+        
 
     }
+
+    public static List<List<Cell>> populateStudents() {
+        List<List<Cell>> students = new ArrayList<>();
+
+        List<Cell> johnDoe = new ArrayList<>();
+        johnDoe.add(new Cell(1234));
+        johnDoe.add(new Cell("John"));
+        johnDoe.add(new Cell("Doe"));
+        johnDoe.add(new Cell("1999-09-21"));
+        johnDoe.add(new Cell("Computer Science"));
+
+        students.add(johnDoe);
+
+        List<Cell> janeSmith = new ArrayList<>();
+        janeSmith.add(new Cell(2345));
+        janeSmith.add(new Cell("Jane"));
+        janeSmith.add(new Cell("Smith"));
+        janeSmith.add(new Cell("2001-02-28"));
+        janeSmith.add(new Cell("Business"));
+
+        students.add(janeSmith);
+
+        List<Cell> aliceJohnson = new ArrayList<>();
+        aliceJohnson.add(new Cell(3456));
+        aliceJohnson.add(new Cell("Alice"));
+        aliceJohnson.add(new Cell("Johnson"));
+        aliceJohnson.add(new Cell("2003-07-14"));
+        aliceJohnson.add(new Cell("Physics"));
+
+        students.add(aliceJohnson);
+
+        List<Cell> jakeNeil = new ArrayList<>();
+        jakeNeil.add(new Cell(6789));
+        jakeNeil.add(new Cell("Jake"));
+        jakeNeil.add(new Cell("Neil"));
+        jakeNeil.add(new Cell("2002-12-02"));
+        jakeNeil.add(new Cell("Computer Science"));
+
+        students.add(jakeNeil);
+
+        return students;
+    }
+
+    public static List<List<Cell>> populateCourses() {
+        List<List<Cell>> courses = new ArrayList<>();
+
+        List<Cell> course1 = new ArrayList<>();
+        course1.add(new Cell(1101));
+        course1.add(new Cell("Introduction to CS"));
+        course1.add(new Cell(3));
+
+        courses.add(course1);
+
+        List<Cell> course2 = new ArrayList<>();
+        course2.add(new Cell(1102));
+        course2.add(new Cell("Calculus I"));
+        course2.add(new Cell(4));
+
+        courses.add(course2);
+
+        List<Cell> course3 = new ArrayList<>();
+        course3.add(new Cell(1103));
+        course3.add(new Cell("Physics I"));
+        course3.add(new Cell(2));
+
+        courses.add(course3);
+
+        return courses;
+    }
+
+    public static List<List<Cell>> populateEnrollment() {
+        List<List<Cell>> enrollment = new ArrayList<>();
+
+        List<Cell> enrollment1 = new ArrayList<>();
+        enrollment1.add(new Cell(1));
+        enrollment1.add(new Cell(1234));
+        enrollment1.add(new Cell(1101));
+        enrollment1.add(new Cell("A"));
+
+        enrollment.add(enrollment1);
+
+        List<Cell> enrollment2 = new ArrayList<>();
+        enrollment2.add(new Cell(2));
+        enrollment2.add(new Cell(1234));
+        enrollment2.add(new Cell(1102));
+        enrollment2.add(new Cell("F"));
+
+        enrollment.add(enrollment2);
+
+        List<Cell> enrollment3 = new ArrayList<>();
+        enrollment3.add(new Cell(3));
+        enrollment3.add(new Cell(3456));
+        enrollment3.add(new Cell(1102));
+        enrollment3.add(new Cell("C"));
+
+        enrollment.add(enrollment3);
+
+        List<Cell> enrollment4 = new ArrayList<>();
+        enrollment4.add(new Cell(4));
+        enrollment4.add(new Cell(6789));
+        enrollment4.add(new Cell(1103));
+        enrollment4.add(new Cell("2"));
+
+        enrollment.add(enrollment4);
+
+        return enrollment;
+    }
+
+    public static List<List<Cell>> populateProfessors() {
+        List<List<Cell>> professors = new ArrayList<>();
+
+        List<Cell> professor1 = new ArrayList<>();
+        professor1.add(new Cell(1));
+        professor1.add(new Cell("Dr. Bob"));
+        professor1.add(new Cell("Williams"));
+        professor1.add(new Cell("Computer Science"));
+
+        professors.add(professor1);
+
+        List<Cell> professor2 = new ArrayList<>();
+        professor2.add(new Cell(2));
+        professor2.add(new Cell("Dr. Anne"));
+        professor2.add(new Cell("Taylor"));
+        professor2.add(new Cell("Mathematics"));
+
+        professors.add(professor2);
+
+        List<Cell> professor3 = new ArrayList<>();
+        professor3.add(new Cell(3));
+        professor3.add(new Cell("Dr. John"));
+        professor3.add(new Cell("Adams"));
+        professor3.add(new Cell("Physics"));
+
+        professors.add(professor3);
+
+        return professors;
+    }
+
+    public static List<List<Cell>> populateTeaches() {
+        List<List<Cell>> teaches = new ArrayList<>();
+
+        List<Cell> teaches1 = new ArrayList<>();
+        teaches1.add(new Cell(1));
+        teaches1.add(new Cell(1));
+        teaches1.add(new Cell(1101));
+
+        teaches.add(teaches1);
+
+        List<Cell> teaches2 = new ArrayList<>();
+        teaches2.add(new Cell(1));
+        teaches2.add(new Cell(2));
+        teaches2.add(new Cell(1102));
+
+        teaches.add(teaches2);
+
+        return teaches;
+    }
+    
 }
+
+
