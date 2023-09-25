@@ -181,6 +181,24 @@ public class RAImpl implements RA {
      */
     @Override
     public Relation cartesianProduct(Relation rel1, Relation rel2){
+      boolean hasCommonAttr = false;
+
+        // Find common attributes
+        for (int a = 0; a < rel1.getAttrs().size(); a++) {
+            for (int b = 0; b < rel2.getAttrs().size(); b++) {
+                if (rel1.getAttrs().get(a).equals(rel2.getAttrs().get(b))) {
+                    hasCommonAttr = true;
+                    break;
+                } // if
+            }
+        } // for
+
+        // If no common attributes, return cartesian product
+        if (hasCommonAttr) {
+            throw new IllegalArgumentException("Relation 1 and Relation 2 have a common attribute.");
+        } // if
+
+
         String mergeName = rel1.getName() + " x " + rel2.getName();
 
         List<String> mergeAttr = new ArrayList<>();
