@@ -4,8 +4,7 @@ import uga.cs4370.mydb.*;
 import java.util.*;
 
 /**
- * Hello world!
- *
+ * Main method to perform to create relations and perform relational algebra.
  */
 public class Main {
     public static void main( String[] args ) {
@@ -24,6 +23,21 @@ public class Main {
         studentTypes.add(Type.STRING);
         studentTypes.add(Type.STRING);
         studentTypes.add(Type.STRING);
+
+        // Student2 Table
+        List<String> student2Attrs = new ArrayList<>();
+        student2Attrs.add("StudentID2");
+        student2Attrs.add("FName2");
+        student2Attrs.add("LName2");
+        student2Attrs.add("DoB2");
+        student2Attrs.add("Major2");
+
+        List<Type> student2Types = new ArrayList<>();
+        student2Types.add(Type.INTEGER);
+        student2Types.add(Type.STRING);
+        student2Types.add(Type.STRING);
+        student2Types.add(Type.STRING);
+        student2Types.add(Type.STRING);
 
         // Courses Table
         List<String> coursesAttrs = new ArrayList<>();
@@ -79,12 +93,14 @@ public class Main {
         List<List<Cell>> enrollment = populateEnrollment();
         List<List<Cell>> professors = populateProfessors();
         List<List<Cell>> teaches = populateTeaches();
-        
+        List<List<Cell>> students2 = populateStudents2();
+
         Relation studentsTable = new RelationImpl("Students", studentAttrs, studentTypes, students);
         Relation coursesTable = new RelationImpl("Courses", coursesAttrs, coursesTypes, courses);
         Relation enrollmentTable = new RelationImpl("Enrollment", enrollmentAttrs, enrollmentTypes, enrollment);
         Relation professorsTable = new RelationImpl("Professors", professorsAttrs, professorsTypes, professors);
         Relation teachesTable = new RelationImpl("Teaches", teachesAttrs, teachesTypes, teaches);
+        Relation students2Table = new RelationImpl("Students2", student2Attrs, student2Types, students2);
 
         // Print Tables
         studentsTable.print();
@@ -200,6 +216,19 @@ public class Main {
         question8 = RA.project(question8, filterAttr);
         question8 = new RelationImpl("Question 8", question8.getAttrs(), question8.getTypes(), question8.getRows());
         question8.print();
+
+
+        //System.out.println("STUDENT2 TABLE");
+        //students2Table.print();
+
+        //union
+        Relation studentUnion = RA.union(studentsTable, students2Table);
+        studentUnion.print();
+
+        //cartiesian product 
+        Relation cpCheck = RA.cartesianProduct(coursesTable, enrollmentTable);
+        cpCheck.print();
+
     }
 
     public static List<List<Cell>> populateStudents() {
@@ -358,6 +387,51 @@ public class Main {
 
         return teaches;
     }
+
+    public static List<List<Cell>> populateStudents2() {
+        List<List<Cell>> students2 = new ArrayList<>();
+
+        List<Cell> samSmith = new ArrayList<>();
+        samSmith.add(new Cell(9493));
+        samSmith.add(new Cell("Sam"));
+        samSmith.add(new Cell("Smith"));
+        samSmith.add(new Cell("1989-12-21"));
+        samSmith.add(new Cell("Biology"));
+
+        students2.add(samSmith);
+
+        List<Cell> joeyPhilip = new ArrayList<>();
+        joeyPhilip.add(new Cell(8733));
+        joeyPhilip.add(new Cell("Joey"));
+        joeyPhilip.add(new Cell("Philip"));
+        joeyPhilip.add(new Cell("2004-01-12"));
+        joeyPhilip.add(new Cell("Physics"));
+
+        students2.add(joeyPhilip);
+
+        List<Cell> annePitz = new ArrayList<>();
+        annePitz.add(new Cell(1937));
+        annePitz.add(new Cell("Jane"));
+        annePitz.add(new Cell("Smith"));
+        annePitz.add(new Cell("1995-05-13"));
+        annePitz.add(new Cell("Physics"));
+
+        students2.add(annePitz);
+
+
+        List<Cell> jakeNeil2 = new ArrayList<>();
+        jakeNeil2.add(new Cell(6789));
+        jakeNeil2.add(new Cell("Jake"));
+        jakeNeil2.add(new Cell("Neil"));
+        jakeNeil2.add(new Cell("2002-12-02"));
+        jakeNeil2.add(new Cell("Computer Science"));
+
+        students2.add(jakeNeil2);
+
+
+        return students2;
+    }
+
     
 }
 
