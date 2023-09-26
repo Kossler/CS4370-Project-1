@@ -140,7 +140,7 @@ public class RAImpl implements RA {
      * rel or origAttr and renamedAttr do not have matching argument counts.
      */
     @Override
-    public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr) {
+    public Relation rename(Relation rel, List<String> origAttr, List<String> renamedAttr){
             // Checking conditions
             boolean present = true;
             boolean size = false;
@@ -168,7 +168,7 @@ public class RAImpl implements RA {
                 System.out.println("origAttr and renamedAttr do not have matching argument counts");
             }
         }
-        return new RelationImpl(rel.getName(), rel.getAttrs(), rel.getTypes(), rel.getRows());
+        return new RelationImpl(rel.getName(), rel.getAttrs(), rel.getTypes());
 
     }
 
@@ -306,8 +306,12 @@ public class RAImpl implements RA {
      * 
      * @param rel Relation you want to make distinct
      * @return The resulting distinct relation
+     * @throws IllegalArgumentException if rel is empty
      */
     public Relation distinct(Relation rel) {
+        if (rel.getRows() == null) {
+            throw new IllegalArgumentException("This relation is empty.");
+        }
         String newName = "Distinct " + rel.getName();
         List<List<Cell>> distinctRows = new ArrayList<>();
         for (List<Cell> row : rel.getRows()) {
