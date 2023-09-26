@@ -7,6 +7,13 @@ import java.util.*;
  * Main method to perform to create relations and perform relational algebra.
  */
 public class Main {
+
+    Relation studentsTable;
+    Relation coursesTable;
+    Relation enrollmentTable;
+    Relation professorsTable;
+    Relation teachesTable;
+
     public static void main( String[] args ) {
 
         // Student Table
@@ -217,15 +224,40 @@ public class Main {
         question8 = new RelationImpl("Question 8", question8.getAttrs(), question8.getTypes(), question8.getRows());
         question8.print();
 
-        //union
-        Relation studentUnion = RA.union(studentsTable, students2Table);
-        studentUnion.print();
+        // Operator Implementation
 
-        //cartiesian product 
-        Relation cpCheck = RA.cartesianProduct(coursesTable, professorsTable);
-        cpCheck.print();
+        // Select
+        Predicate selPredicate = new Predicate() {
+            
+            public boolean check(List<Cell> row) {
+                if (row.get(studentsTable.getAttrIndex("Major")).getAsString().equals("Physics")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        Relation select = RA.select(studentsTable, selPredicate);
+        select = new RelationImpl("Select Operation", select.getAttrs(), select.getTypes(), select.getRows());
+        select.print();
 
-        //rename
+        // Project
+        List<String> projectAttrs = List.of("StudentID", "Grade");
+        Relation project = RA.project(enrollmentTable, projectAttrs);
+        project = new RelationImpl("Project Operation", project.getAttrs(), project.getTypes(), project.getRows());
+        project.print();
+
+        // Union
+        Relation union = RA.union(studentsTable, students2Table);
+        union = new RelationImpl("Union Operation", union.getAttrs(), union.getTypes(), union.getRows());
+        union.print();
+
+        // Difference
+        Relation difference = RA.diff(union, studentsTable);
+        difference = new RelationImpl("Difference Operation", difference.getAttrs(), difference.getTypes(), difference.getRows());
+        difference.print();
+
+        // Rename
         RA newTable = new RAImpl();
         List<String> newAttrs = new ArrayList<>();
         newAttrs.add("Student's ID");
@@ -233,13 +265,33 @@ public class Main {
         newAttrs.add("Last Name");
         newAttrs.add("Birthday");
         newAttrs.add("Student Major");
-        Relation renameCheck = newTable.rename(studentsTable, studentsTable.getAttrs(), newAttrs);
-        renameCheck.print();
+        Relation rename = newTable.rename(studentsTable, studentsTable.getAttrs(), newAttrs);
+        rename = new RelationImpl("Rename Operation", rename.getAttrs(), rename.getTypes(), rename.getRows());
+        rename.print();
 
+        // Cartesian Product
+        Relation cartesianProduct = RA.cartesianProduct(coursesTable, professorsTable);
+        cartesianProduct = new RelationImpl("Cartesian Product Operation", cartesianProduct.getAttrs(), cartesianProduct.getTypes(), cartesianProduct.getRows());
+        cartesianProduct.print();
 
-        // join theta 
-        Relation joinThetaCheck = RA.join(coursesTable, professorsTable);
-        joinThetaCheck.print();
+        // Natural Join
+        Relation naturalJoin = RA.join(enrollmentTable, coursesTable);
+        naturalJoin = new RelationImpl("Natural Join Operation", naturalJoin.getAttrs(), naturalJoin.getTypes(), naturalJoin.getRows());
+        naturalJoin.print();
+
+        // Theta Join 
+        Predicate thetaJoinPredicate = new Predicate() {
+            public boolean check(List<Cell> row) {
+                if (row.get(coursesTable.getAttrIndex("Credits")).getAsInt() < 4) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+        Relation thetaJoin = RA.join(coursesTable, professorsTable, thetaJoinPredicate);
+        thetaJoin = new RelationImpl("Theta Join Operation", thetaJoin.getAttrs(), thetaJoin.getTypes(), thetaJoin.getRows());
+        thetaJoin.print();
     }
 
     public static List<List<Cell>> populateStudents() {
